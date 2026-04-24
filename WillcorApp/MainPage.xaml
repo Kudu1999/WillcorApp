@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WillcorApp.MainPage"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto ,*, Auto" BackgroundColor="#F2F5F2">
+        <Border BackgroundColor="White" Stroke="White">
+            <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto" Padding="15">
+                <Label Grid.Row="0" Grid.Column="0" Text="Schedule" TextColor="Gray" FontSize="Micro"/>
+                <Label Grid.Row="2" Grid.Column="0" Text="{Binding TodayRuns.RunDate, StringFormat='{0:dddd, d MMMM yyyy}'}" TextColor="{StaticResource WilDarkGreen}"/>
+
+                <Border Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Padding="10,3,10,3"
+                        Stroke="{StaticResource WilBorderGreen}"
+                        BackgroundColor="{StaticResource WilLightGreen}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15"/>
+                    </Border.StrokeShape>
+                    <Label Text="{Binding TodayRuns.Items.Count, StringFormat='{0} stops today'}" TextColor="{StaticResource WilDarkGreen}"/>
+                </Border>
+            </Grid>
+        </Border>
+        <VerticalStackLayout Grid.Row="1" Padding="15">
+            <Label Text="CLIENTS" TextColor="Gray"/>
+            <CollectionView ItemsSource="{Binding TodayRuns.Items}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="10" Stroke="{StaticResource WilBorderGreen}" BackgroundColor="White" Margin="0,15,0,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10"/>
+                            </Border.StrokeShape>
+                            <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="0.5*, 0.5*">
+                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding ClientName}" FontAttributes="Bold" FontSize="Medium"/>
+                                <Label Grid.Row="1" Grid.Column="0"  Text="AREA CODE" TextColor="Gray" FontSize="Micro" Margin="0,10,0,0"/>
+                                <Label Grid.Row="1" Grid.Column="1" Text="REF NUMBER" TextColor="Gray" FontSize="Micro" Margin="0,10,0,0"/>
+                                <Label Grid.Row="2" Grid.Column="1" Text="{Binding ReferenceNumber}"/>
+                                <Label Grid.Row="2" Grid.Column="0" Text="{Binding AreaCode}"/>
+                                <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="{StaticResource BackgroundGray}" Stroke="{StaticResource WilBorderGreen}" Margin="0,7,0,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="5"/>
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="Auto, *" Padding="15,4,15,4">
+                                        <Label Grid.Row="0" Text="$"/>
+                                        <Label Grid.Column="1" Text="{Binding Address}"/>
+                                    </Grid>
+                                </Border>
+                                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions=".8*, .2*" ColumnSpacing="10" Margin="0,10,0,0">
+                                    <Button Grid.Column="0" Text="Mark Complete" TextColor="White" BackgroundColor="{StaticResource WilDarkGreen}" Padding="10" />
+                                    <Button Grid.Column="1" Text="Skip" BackgroundColor="White" TextColor="Gray" Padding="10" BorderColor="Gray"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+        <Border Grid.Row="2" Padding="20" Margin="15" Stroke="{StaticResource WilBorderGreen}" BackgroundColor="White">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10"/>
+            </Border.StrokeShape>
+            <Border.StrokeDashArray>
+                <DoubleCollection>
+                    4,2
+                </DoubleCollection>
+            </Border.StrokeDashArray>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+            </Border.GestureRecognizers>
+            <HorizontalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                <Image Source="circle_plus_solid_full.png" HeightRequest="25" WidthRequest="25"/>
+                <Label Text="Add client to today's list" TextColor="{StaticResource WilDarkGreen}" Margin="0,2,0,0"/>
+            </HorizontalStackLayout>
+        </Border>
+        <Border Grid.Row="2" BackgroundColor="White" Padding="20" IsVisible="False" x:Name="pickupPopup">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="20, 20,0,0"/>
+            </Border.StrokeShape>
+            <VerticalStackLayout>
+                <Label Text="Anele Botha" FontSize="Medium"/>
+                <Label Text="Log the bags collected for this pickup" TextColor="Gray" FontSize="Small"/>
+                <Grid ColumnDefinitions="0.3*,0.3*,0.3*" ColumnSpacing="10" Margin="0,10,0,0">
+                    <Border Grid.Column="0"  Padding="5" BackgroundColor="#F6FAF6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Small Bags" HorizontalOptions="Center" TextColor="Gray" Margin="2" />
+                            <HorizontalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                                <Button Text="-" Clicked="Subsmallbag" Style="{StaticResource addButton}" />
+                                <Label Text="0" x:Name="smallbagstxt" VerticalOptions="Center"/>
+                                <Button Text="+" Clicked="Addsmallbag" Style="{StaticResource addButton}"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1"  Padding="5" BackgroundColor="#F6FAF6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Big Bags" HorizontalOptions="Center" TextColor="Gray" Margin="2"/>
+                            <HorizontalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                                <Button Text="-" Clicked="SubBigbag" Style="{StaticResource addButton}" />
+                                <Label Text="0" x:Name="bigbagstxt" VerticalOptions="Center"/>
+                                <Button Text="+" Clicked="AddBigbag" Style="{StaticResource addButton}"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2"  Padding="5" BackgroundColor="#F6FAF6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <VerticalStackLayout>
+                            <Label Text="Trailer loads" HorizontalOptions="Center" TextColor="Gray" Margin="2"/>
+                            <HorizontalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                                <Button Text="-" Clicked="SubTrailer" Style="{StaticResource addButton}" />
+                                <Label Text="0" x:Name="trailerloadstxt" VerticalOptions="Center"/>
+                                <Button Text="+" Clicked="AddTrailer" Style="{StaticResource addButton}"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+                <Label Text="Comment (Optional)" TextColor="Gray" Margin="0,10,0,0"/>
+                <Border BackgroundColor="#F6FAF6" Padding="5">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <Editor Placeholder="e.g Gate was loacked" AutoSize="TextChanges" HeightRequest="100" />
+                </Border>
+                <Grid ColumnDefinitions="0.4*, 0.6*" ColumnSpacing="10" Margin="0,10,0,0">
+                    <Button Grid.Column="0" Text="Cancel" Clicked="Button_Clicked" BackgroundColor="White" TextColor="Black" BorderColor="Gray"/>
+                    <Button Grid.Column="1" Text="Confirm pickup" BackgroundColor="{StaticResource WilDarkGreen}"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+
+</ContentPage>
