@@ -1,4 +1,6 @@
-﻿using WillcorApp.ViewModel;
+﻿using System;
+using WillcorApp.Models;
+using WillcorApp.ViewModel;
 
 namespace WillcorApp
 {
@@ -10,31 +12,99 @@ namespace WillcorApp
         int smallbags = 0;
         int bigbags = 0;
         double trailer = 0;
+        int itemID = -1;
 
         public MainPage(TodaysListViewModel todaysListViewModel)
         {
             InitializeComponent();
-            BindingContext = todaysListViewModel;
+            _todaysListViewModel = todaysListViewModel ?? throw new ArgumentNullException(nameof(todaysListViewModel));
+            BindingContext = _todaysListViewModel;
         }
 
 
 
-        private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        private async void AddClientTapped(object sender, TappedEventArgs e)
         {
 
+            addClientPopup.IsVisible = true;
+
+            await _todaysListViewModel.GetClientList();
+        }
+
+        private async void AddSelectedClientsClicked(object sender, EventArgs e)
+        {
+            if (_todaysListViewModel.SelectedClients.Count == 0)
+            {
+                await DisplayAlert("No Clients Selected", "Please select at least one client to add to the pickup run.", "OK");
+                return;
+            }
+
+            await _todaysListViewModel.AddSelectedClientsToRun();
+            await _todaysListViewModel.GetTodaysList();
+
+            addClientPopup.IsVisible = false;
+
+        }
+
+        private void CancelAddClientsClicked(object sender, EventArgs e)
+        {
+            addClientPopup.IsVisible = false;
         }
 
         private void MarkCompleteClicked(object sender, EventArgs e)
         {
-            showConfirmPickup = true;
-            pickupPopup.IsVisible = showConfirmPickup;
-            SemanticScreenReader.Announce("Pickup confirmation popup is now visible.");
+            var button = sender as Button;
+
+            if (button?.BindingContext is PickupRunItemDto run)
+            {
+                var clientName = run.ClientName;
+                itemID = run.Id;
+
+                PickupClientName.Text = clientName;
+
+                // Now you can use it
+                showConfirmPickup = true;
+                pickupPopup.IsVisible = showConfirmPickup;
+                addClientTOTodayBtn.IsEnabled = false;
+
+                // Example: announce with name
+                SemanticScreenReader.Announce($"Pickup confirmation for {clientName} is now visible.");
+            }
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void ConfirmPickupClicked(object sender, EventArgs e)
+        {
+            var button = sender as Button;
+            var updatePickup = new UpdatePickupRunItemDto
+            {
+                IsCollected = true,
+                SmallBagsCollected = smallbags,
+                BigBagsCollected = bigbags,
+                BagsCollected = bigbags + smallbags,
+                TrailerLoadsCollected = trailer,
+                Notes = pickupNotes.Text
+            };
+
+            await _todaysListViewModel.MarkPickupCompleted( itemID, updatePickup);
+
+            showConfirmPickup = false;
+            pickupPopup.IsVisible = showConfirmPickup;
+            addClientTOTodayBtn.IsEnabled = true;
+
+            smallbags = 0;
+            bigbags = 0;
+            trailer = 0;
+
+            smallbagstxt.Text = smallbags.ToString();
+            bigbagstxt.Text = smallbags.ToString();
+            trailerloadstxt.Text = smallbags.ToString();
+        }
+
+        private void CancelPickupClicked(object sender, EventArgs e)
         {
             showConfirmPickup = false;
             pickupPopup.IsVisible = showConfirmPickup;
+            addClientTOTodayBtn.IsEnabled = true;
 
             smallbags = 0;
             bigbags = 0;
