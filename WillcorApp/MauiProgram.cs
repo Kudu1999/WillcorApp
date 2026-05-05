@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using WillcorApp.RestServices;
 using WillcorApp.ViewModel;
+using WillcorApp.Pages;
 
 namespace WillcorApp
 {
@@ -19,8 +20,12 @@ namespace WillcorApp
 
             builder.Services.AddTransient<RestService>();
 
+            builder.Services.AddSingleton<PickupHistoryViewModel>();
             builder.Services.AddSingleton<TodaysListViewModel>();
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<PickupHistory>();
+            builder.Services.AddSingleton<ClientsPage>();
+            builder.Services.AddSingleton<ClientPageViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

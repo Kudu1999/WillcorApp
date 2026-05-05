@@ -4,10 +4,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:WillcorApp"
+    xmlns:pages="clr-namespace:WillcorApp.Pages"
     Title="WillcorApp"
     Shell.TabBarUnselectedColor="grey"
     Shell.TabBarForegroundColor="{StaticResource WilDarkGreen}"
-    Shell.TabBarTitleColor="{StaticResource WilDarkGreen}">
+    Shell.TabBarTitleColor="{StaticResource WilDarkGreen}"
+    Shell.TitleColor="{StaticResource WilDarkGreen}">
 
     <TabBar>
         <ShellContent Title="Today" 
@@ -16,15 +18,15 @@
 
         <ShellContent Title="Pickups"
           Icon="trash"
-           ContentTemplate="{DataTemplate local:MainPage}"/>
+           ContentTemplate="{DataTemplate pages:PickupHistory}"/>
 
-        <ShellContent Title="History"
+        <ShellContent Title="Calendar"
           Icon="clock"
-           ContentTemplate="{DataTemplate local:MainPage}"/>
+           ContentTemplate="{DataTemplate pages:CalendarPage}"/>
 
-        <ShellContent Title="Profile"
+        <ShellContent Title="Clients"
           Icon="user"
-           ContentTemplate="{DataTemplate local:MainPage}"/>
+           ContentTemplate="{DataTemplate pages:ClientsPage}"/>
     </TabBar>
 
 

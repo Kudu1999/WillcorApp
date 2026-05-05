@@ -6,18 +6,14 @@ using System.Threading.Tasks;
 
 namespace WillcorApp.Models
 {
-    public class PickupSchedule
+    public class AddPickupScheduleDTO
     {
-        public int Id { get; set; }
         public int ClientId { get; set; }
-        public Client? Client { get; set; } = null!;
-        public string Frequency { get; set; } = string.Empty;
+        public string? Frequency { get; set; } = string.Empty;
         public string? Destination { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
-
         public int WeekInterval { get; set; } = 1;
         public DateTime StartDate { get; set; }
-
-        public ICollection<PickupDay> PickupDays { get; set; } = new List<PickupDay>();
+        public List<DayOfWeek> CollectionDays { get; set; } = new();
     }
 }

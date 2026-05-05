@@ -85,7 +85,7 @@ namespace WillcorApp
                 Notes = pickupNotes.Text
             };
 
-            await _todaysListViewModel.MarkPickupCompleted( itemID, updatePickup);
+            await _todaysListViewModel.MarkPickupCompleted(itemID, updatePickup);
 
             showConfirmPickup = false;
             pickupPopup.IsVisible = showConfirmPickup;
@@ -94,10 +94,36 @@ namespace WillcorApp
             smallbags = 0;
             bigbags = 0;
             trailer = 0;
+            itemID = -1;
 
             smallbagstxt.Text = smallbags.ToString();
-            bigbagstxt.Text = smallbags.ToString();
-            trailerloadstxt.Text = smallbags.ToString();
+            bigbagstxt.Text = bigbags.ToString();
+            trailerloadstxt.Text = trailer.ToString();
+        }
+
+        private async void SkippedPickupClicked(object sender, EventArgs e)
+        {
+            var button = sender as Button;
+
+            if (button?.BindingContext is PickupRunItemDto run)
+            {
+                itemID = run.Id;
+            }
+
+            var updatePickup = new UpdatePickupRunItemDto
+            {
+                IsCollected = true,
+                SmallBagsCollected = 0,
+                BigBagsCollected = 0,
+                BagsCollected = 0,
+                TrailerLoadsCollected = 0,
+                Notes = pickupNotes.Text
+            };
+
+            await _todaysListViewModel.MarkPickupCompleted(itemID, updatePickup);
+
+            itemID = -1;
+
         }
 
         private void CancelPickupClicked(object sender, EventArgs e)

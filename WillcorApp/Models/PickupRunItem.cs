@@ -20,6 +20,9 @@ namespace WillcorApp.Models
         public bool IsCollected { get; set; } = false;
 
         public int? BagsCollected { get; set; }
+        public int? BigBagsCollected { get; set; }
+        public int? SmallBagsCollected { get; set; }
+        public double? TrailerLoadsCollected { get; set; }
         public int? BagsDropped { get; set; }
 
         public string? Destination { get; set; }

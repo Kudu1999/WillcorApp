@@ -94,13 +94,110 @@ namespace WillcorApp.RestServices
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert("Error", $"Unable to mark pickup complete: {response.ReasonPhrase}" , "OK");
+                    await Shell.Current.DisplayAlert("Error", $"Unable to mark pickup complete: {response.ReasonPhrase}", "OK");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 await Shell.Current.DisplayAlert("Error", $"Unable to mark pickup complete: {ex.Message}", "OK");
+            }
+        }
+
+        public async Task<int> SaveNewClientProfile(Client clientnew)
+        {
+            try
+            {
+                int clientId = 0; // Placeholder, as the API will generate the ID
+
+                var newClient = new Client
+                {
+                    Name = clientnew.Name,
+                    Address = clientnew.Address,
+                    AreaCode = clientnew.AreaCode,
+                    ReferenceNumber = clientnew.ReferenceNumber,
+                    Notes = clientnew.Notes
+                };
+
+                var response = await _client.PostAsJsonAsync("api/Clients", newClient);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var createdClient = await response.Content.ReadFromJsonAsync<Client>();
+                    if (createdClient != null)
+                    {
+                        clientId = createdClient.Id;
+                    }
+
+
+                    await Shell.Current.DisplayAlert("Success", "New client profile created successfully!", "OK");
+
+                    return clientId;
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Failed to create client profile: {response.ReasonPhrase} - {errorContent}", "OK");
+                    return -1; // Indicate failure
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Unable to create client profile: {ex.Message}", "OK");
+            }
+
+            return -1;
+        }
+
+        public async Task EditClient(Client clientnew, int clientId)
+        {
+            try
+            {
+                var newClient = new Client
+                {
+                    Name = clientnew.Name,
+                    Address = clientnew.Address,
+                    AreaCode = clientnew.AreaCode,
+                    ReferenceNumber = clientnew.ReferenceNumber,
+                    Notes = clientnew.Notes
+                };
+
+                var response = await _client.PutAsJsonAsync($"api/Clients/{clientId}", newClient);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await Shell.Current.DisplayAlert("Success", "Client profile updated successfully!", "OK");
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Failed to update client profile: {response.ReasonPhrase} - {errorContent}", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Unable to update client profile: {ex.Message}", "OK");
+            }
+        }
+
+        public async Task AddPickupSchedule(AddPickupScheduleDTO addPickupSchedule)
+        {
+            try
+            {
+                var response = await _client.PostAsJsonAsync($"api/PickupSchedules", addPickupSchedule);
+                if (response.IsSuccessStatusCode)
+                {
+                    await Shell.Current.DisplayAlert("Success", "Pickup schedule added successfully!", "OK");
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    await Shell.Current.DisplayAlert("Error", $"Failed to add pickup schedule: {response.ReasonPhrase} - {errorContent}", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", $"Unable to add pickup schedule: {ex.Message}", "OK");
             }
         }
 
